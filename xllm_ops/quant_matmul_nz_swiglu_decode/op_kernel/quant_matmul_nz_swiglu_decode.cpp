@@ -30,10 +30,10 @@ __aicore__ inline void RunQuantMatmulNzSwigluDecode(
     GM_ADDR x, GM_ADDR weight, GM_ADDR scale, GM_ADDR bias,
     GM_ADDR quant_scale, GM_ADDR quant_offset, GM_ADDR y,
     GM_ADDR workspace, uint32_t m, uint32_t k, uint32_t n) {
-  using L1TileShape = GemmShape<16, 160, 512>;
+  using L1TileShape = GemmShape<16, 160, QuantOutput ? 1024 : 512>;
   using L0TileShape = GemmShape<16, 128, 256>;
   using DispatchPolicy = Gemm::MmadAtlasA2PreloadAsyncWithCallback<
-      1, 2, 2, 2, 1, false, false>;
+      1, 2, 2, 2, 1, false, QuantOutput>;
   using AType = Gemm::GemmType<int8_t, layout::RowMajor>;
   using BType = Gemm::GemmType<int8_t, layout::zN>;
   using CType = Gemm::GemmType<int32_t, layout::RowMajor>;
