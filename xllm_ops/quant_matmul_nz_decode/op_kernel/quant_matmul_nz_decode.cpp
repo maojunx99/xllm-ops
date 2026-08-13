@@ -118,6 +118,9 @@ extern "C" __global__ __aicore__ void quant_matmul_nz_decode(
   } else if (TILING_KEY_IS(2)) {
     RunQuantMatmulNzDecode<256, 896, 128, 256, true>(
         x, weight, scale, bias, y, workspace, m, k, n);
+  } else if (TILING_KEY_IS(4)) {
+    RunQuantMatmulNzDecode<128, 1536, 128, 256, true>(
+        x, weight, scale, bias, y, workspace, m, k, n);
   }
 }
 

@@ -21,6 +21,7 @@ limitations under the License.
 namespace optiling {
 namespace {
 constexpr uint32_t kCoreCount = 20;
+constexpr uint32_t kQkvCoreCount = 10;
 constexpr uint32_t kTileM = 16;
 constexpr uint32_t kMaxOptimizedM = 16;
 constexpr uint32_t kTileN = 320;
@@ -44,8 +45,9 @@ ge::graphStatus TilingFunc(gert::TilingContext* context) {
 
   const bool is_gate_up_shape = k_dim == 5120 && n_dim == 6400;
   const bool is_down_shape = k_dim == 3200 && n_dim == 5120;
+  const bool is_qkv_shape = k_dim == 5120 && n_dim == 1280;
   if (m_dim <= 0 || m_dim > kMaxOptimizedM ||
-      (!is_gate_up_shape && !is_down_shape) ||
+      (!is_gate_up_shape && !is_down_shape && !is_qkv_shape) ||
       weight_shape.GetDim(0) != k_dim ||
       scale_shape.GetDim(0) != n_dim || bias_shape.GetDim(0) != n_dim) {
     return ge::GRAPH_FAILED;
@@ -61,9 +63,11 @@ ge::graphStatus TilingFunc(gert::TilingContext* context) {
   tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),
                       context->GetRawTilingData()->GetCapacity());
   context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());
-  context->SetBlockDim(kCoreCount);
+  context->SetBlockDim(is_qkv_shape ? kQkvCoreCount : kCoreCount);
   if (is_down_shape) {
     context->SetTilingKey(m == 1 ? 1 : (m <= 4 ? 3 : 2));
+  } else if (is_qkv_shape) {
+    context->SetTilingKey(4);
   } else {
     context->SetTilingKey(0);
   }

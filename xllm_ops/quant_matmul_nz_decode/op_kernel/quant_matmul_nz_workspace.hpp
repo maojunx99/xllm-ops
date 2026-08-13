@@ -127,7 +127,9 @@ public:
         gmA.SetGlobalBuffer(params.ptrA);
         AscendC::GlobalTensor<ElementB> gmB;
         gmB.SetGlobalBuffer(params.ptrB);
-        gmB.SetL2CacheHint(AscendC::CacheMode::CACHE_MODE_DISABLE);
+        if (params.problemShape.n() != 1280) {
+            gmB.SetL2CacheHint(AscendC::CacheMode::CACHE_MODE_DISABLE);
+        }
 
         uint32_t coreIdx = AscendC::GetBlockIdx();
         uint32_t coreNum = AscendC::GetBlockNum();

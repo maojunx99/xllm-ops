@@ -22,7 +22,7 @@ endif()
 
 add_ops_tiling_keys(
     OP_NAME QuantMatmulNzDecode
-    TILING_KEYS 1 3 2 0
+    TILING_KEYS 1 3 2 0 4
 )
 
 add_ops_compile_options(
