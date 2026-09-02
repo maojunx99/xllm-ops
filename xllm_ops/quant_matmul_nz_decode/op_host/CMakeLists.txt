@@ -28,7 +28,9 @@ add_ops_tiling_keys(
 add_ops_compile_options(
     OP_NAME QuantMatmulNzDecode
     OPTIONS --cce-auto-sync=off
+            -DCATLASS_ARCH=2201
             -DCATLASS_ENABLE_L1_L0_MN_TILE_MISMATCH
+            -DCATLASS_ENABLE_UNALIGNED_L1_M_TILE
             -Wno-deprecated-declarations
             -Wno-error
             -I${CMAKE_SOURCE_DIR}/../third_party/catlass/include
